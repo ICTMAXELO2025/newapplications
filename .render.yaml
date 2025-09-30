@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: internship-portal
+    env: python
+    plan: free
+    branch: main
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn app:app"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.0
