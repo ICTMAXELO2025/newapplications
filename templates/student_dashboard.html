@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Student Dashboard</h2>
+<p>Welcome, {{ current_user.email }}</p>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">My Applications</h5>
+    </div>
+    <div class="card-body">
+        {% if applications %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Names</th>
+                        <th>Surname</th>
+                        <th>Course</th>
+                        <th>University</th>
+                        <th>Date Applied</th>
+                        <th>CV</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>{{ app.names }}</td>
+                        <td>{{ app.surname }}</td>
+                        <td>{{ app.course }}</td>
+                        <td>{{ app.university }}</td>
+                        <td>{{ app.date_applied.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <a href="{{ url_for('download_cv', app_id=app.id) }}" class="btn btn-sm btn-outline-primary">
+                                Download CV
+                            </a>
+                        </td>
+                        <td>
+                            <span class="badge 
+                                {% if app.status == 'approved' %}bg-success
+                                {% elif app.status == 'rejected' %}bg-danger
+                                {% else %}bg-warning{% endif %}">
+                                {{ app.status|title }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-center">No applications found. <a href="{{ url_for('application') }}">Apply now!</a></p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{{ url_for('application') }}" class="btn btn-success">New Application</a>
+</div>
+{% endblock %}
