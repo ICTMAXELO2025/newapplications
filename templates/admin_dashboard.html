@@ -4,10 +4,7 @@
 <h2>Admin Dashboard</h2>
 <p>Welcome, {{ session.admin_email }}</p>
 <div class="col-md-2">
-                <button class="btn btn-primary w-100"><a href="https://messages-mbs.onrender.com/messages">
-                 Search</a>
-                </button>
-            </div>
+                
 
 <!-- Simple Search Section -->
 <div class="card mb-4">
@@ -135,6 +132,11 @@
             <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">
                 <i class="fas fa-list"></i> View All Applications
             </a>
+
+            <a href="https://messages-mbs.onrender.com/messages" class="btn btn-sm btn-outline-secondary ms-2">
+                    <i class="fas fa-envelope me-2"></i> View All Messages
+                </a>
+        
             {% else %}
             <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
             <h5>No applications yet</h5>
