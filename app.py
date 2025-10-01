@@ -320,16 +320,50 @@ def admin_login():
 @app.route('/admin/dashboard')
 @admin_login_required
 def admin_dashboard():
+    search_query = request.args.get('search', '')
+    status_filter = request.args.get('status', '')
+    
     conn = get_db_connection()
-    applications = conn.execute('''
+    
+    # Build query based on filters
+    query = '''
         SELECT a.*, s.email as student_email 
         FROM applications a 
         JOIN students s ON a.student_id = s.id 
-        ORDER BY a.date_applied DESC
-    ''').fetchall()
+    '''
+    params = []
+    
+    conditions = []
+    if search_query:
+        conditions.append('(a.names LIKE ? OR a.surname LIKE ? OR s.email LIKE ?)')
+        search_term = f'%{search_query}%'
+        params.extend([search_term, search_term, search_term])
+    
+    if status_filter:
+        conditions.append('a.status = ?')
+        params.append(status_filter)
+    
+    if conditions:
+        query += ' WHERE ' + ' AND '.join(conditions)
+    
+    query += ' ORDER BY a.date_applied DESC'
+    
+    applications = conn.execute(query, params).fetchall()
+    
+    # Get counts
+    total_count = conn.execute('SELECT COUNT(*) FROM applications').fetchone()[0]
+    pending_count = conn.execute('SELECT COUNT(*) FROM applications WHERE status = ?', ('pending',)).fetchone()[0]
+    approved_count = conn.execute('SELECT COUNT(*) FROM applications WHERE status = ?', ('approved',)).fetchone()[0]
+    rejected_count = conn.execute('SELECT COUNT(*) FROM applications WHERE status = ?', ('rejected',)).fetchone()[0]
+    
     conn.close()
     
-    return render_template('admin_dashboard.html', applications=applications)
+    return render_template('admin_dashboard.html', 
+                         applications=applications,
+                         total_count=total_count,
+                         pending_count=pending_count,
+                         approved_count=approved_count,
+                         rejected_count=rejected_count)
 
 @app.route('/admin/update_status/<int:app_id>/<status>')
 @admin_login_required
