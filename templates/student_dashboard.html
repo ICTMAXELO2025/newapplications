@@ -2,7 +2,7 @@
 
 {% block content %}
 <h2>Student Dashboard</h2>
-<p>Welcome, {{ current_user.email }}</p>
+<p>Welcome, {{ session.student_email }}</p>  <!-- Changed from current_user.email -->
 
 <div class="card">
     <div class="card-header">
@@ -30,7 +30,7 @@
                         <td>{{ app.surname }}</td>
                         <td>{{ app.course }}</td>
                         <td>{{ app.university }}</td>
-                        <td>{{ app.date_applied.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>{{ app.date_applied }}</td>
                         <td>
                             <a href="{{ url_for('download_cv', app_id=app.id) }}" class="btn btn-sm btn-outline-primary">
                                 Download CV

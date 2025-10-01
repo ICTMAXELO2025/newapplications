@@ -2,6 +2,7 @@
 
 {% block content %}
 <h2>Admin Dashboard</h2>
+<p>Welcome, {{ session.admin_email }}</p>  <!-- Added admin email display -->
 
 <div class="card">
     <div class="card-header">
@@ -27,7 +28,7 @@
                 <tbody>
                     {% for app in applications %}
                     <tr>
-                        <td>{{ app.student.email }}</td>
+                        <td>{{ app.student_email }}</td>
                         <td>{{ app.names }}</td>
                         <td>{{ app.surname }}</td>
                         <td>{{ app.course }}</td>
@@ -37,7 +38,7 @@
                                 Download
                             </a>
                         </td>
-                        <td>{{ app.date_applied.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>{{ app.date_applied }}</td>
                         <td>
                             <span class="badge 
                                 {% if app.status == 'approved' %}bg-success

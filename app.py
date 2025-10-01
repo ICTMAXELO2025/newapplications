@@ -10,111 +10,56 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here-change-
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-# Use PostgreSQL on Render, SQLite locally
-if os.getenv('RENDER'):
-    app.config['DATABASE'] = 'postgresql'  # Render provides DATABASE_URL
-else:
-    app.config['DATABASE'] = 'applications.db'
-
 # Create uploads directory if it doesn't exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Database connection
+# Database connection - Use SQLite for now to avoid PostgreSQL issues
 def get_db_connection():
-    if os.getenv('DATABASE_URL'):
-        # Use PostgreSQL on Render
-        import psycopg2
-        from urllib.parse import urlparse
-        
-        result = urlparse(os.getenv('DATABASE_URL'))
-        conn = psycopg2.connect(
-            database=result.path[1:],
-            user=result.username,
-            password=result.password,
-            host=result.hostname,
-            port=result.port
-        )
-        return conn
-    else:
-        # Use SQLite locally
-        conn = sqlite3.connect(app.config['DATABASE'])
-        conn.row_factory = sqlite3.Row
-        return conn
+    # For now, always use SQLite to avoid connection issues
+    conn = sqlite3.connect('applications.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 # Initialize database tables
 def init_db():
     conn = get_db_connection()
-    cursor = conn.cursor()
     
-    if os.getenv('DATABASE_URL'):
-        # PostgreSQL syntax
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS students (
-                id SERIAL PRIMARY KEY,
-                email VARCHAR(100) UNIQUE NOT NULL,
-                phone VARCHAR(20) NOT NULL,
-                password VARCHAR(200) NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
-        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS admins (
-                id SERIAL PRIMARY KEY,
-                email VARCHAR(100) UNIQUE NOT NULL,
-                password VARCHAR(200) NOT NULL
-            )
-        ''')
-        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS applications (
-                id SERIAL PRIMARY KEY,
-                names VARCHAR(100) NOT NULL,
-                surname VARCHAR(100) NOT NULL,
-                course VARCHAR(100) NOT NULL,
-                university VARCHAR(100) NOT NULL,
-                cv_filename VARCHAR(200) NOT NULL,
-                status VARCHAR(20) DEFAULT 'pending',
-                date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                student_id INTEGER REFERENCES students(id)
-            )
-        ''')
-    else:
-        # SQLite syntax
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS students (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email VARCHAR(100) UNIQUE NOT NULL,
-                phone VARCHAR(20) NOT NULL,
-                password VARCHAR(200) NOT NULL,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
-        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS admins (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email VARCHAR(100) UNIQUE NOT NULL,
-                password VARCHAR(200) NOT NULL
-            )
-        ''')
-        
-        cursor.execute('''
-            CREATE TABLE IF NOT EXISTS applications (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                names VARCHAR(100) NOT NULL,
-                surname VARCHAR(100) NOT NULL,
-                course VARCHAR(100) NOT NULL,
-                university VARCHAR(100) NOT NULL,
-                cv_filename VARCHAR(200) NOT NULL,
-                status VARCHAR(20) DEFAULT 'pending',
-                date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                student_id INTEGER REFERENCES students(id)
-            )
-        ''')
+    # SQLite syntax (compatible with both)
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS students (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email VARCHAR(100) UNIQUE NOT NULL,
+            phone VARCHAR(20) NOT NULL,
+            password VARCHAR(200) NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    ''')
+    
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS admins (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            email VARCHAR(100) UNIQUE NOT NULL,
+            password VARCHAR(200) NOT NULL
+        )
+    ''')
+    
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS applications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            names VARCHAR(100) NOT NULL,
+            surname VARCHAR(100) NOT NULL,
+            course VARCHAR(100) NOT NULL,
+            university VARCHAR(100) NOT NULL,
+            cv_filename VARCHAR(200) NOT NULL,
+            status VARCHAR(20) DEFAULT 'pending',
+            date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            student_id INTEGER REFERENCES students(id)
+        )
+    ''')
     
     conn.commit()
     conn.close()
+    print("✅ Database initialized successfully!")
 
 # Simple login required decorator
 def student_login_required(f):
@@ -135,8 +80,6 @@ def admin_login_required(f):
     decorated_function.__name__ = f.__name__
     return decorated_function
 
-# [Keep all your routes exactly the same as before - they should work with both databases]
-# ... (Include all your route functions from the previous version)
 # Routes
 @app.route('/')
 def index():
@@ -173,6 +116,7 @@ def student_register():
             'INSERT INTO students (email, phone, password) VALUES (?, ?, ?)',
             (email, phone, hashed_password)
         )
+        student_id = cursor.lastrowid
         conn.commit()
         conn.close()
         
@@ -186,6 +130,7 @@ def student_login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        print(f"🔐 Login attempt for: {email}")  # Debug
         
         conn = get_db_connection()
         student = conn.execute(
@@ -198,9 +143,12 @@ def student_login():
             session['student_id'] = student['id']
             session['student_email'] = student['email']
             session['user_type'] = 'student'
+            session.permanent = True  # Make session persistent
+            print(f"✅ Login successful: {student['email']}")  # Debug
             flash('Login successful!', 'success')
             return redirect(url_for('student_dashboard'))
         else:
+            print("❌ Login failed")  # Debug
             flash('Invalid email or password!', 'error')
     
     return render_template('student_login.html')
@@ -300,6 +248,7 @@ def admin_login():
                     'INSERT INTO admins (email, password) VALUES (?, ?)',
                     (email, hashed_password)
                 )
+                admin_id = cursor.lastrowid
                 conn.commit()
                 admin = conn.execute(
                     'SELECT * FROM admins WHERE email = ?', (email,)
@@ -309,6 +258,7 @@ def admin_login():
             session['admin_id'] = admin['id']
             session['admin_email'] = admin['email']
             session['user_type'] = 'admin'
+            session.permanent = True  # Make session persistent
             conn.close()
             flash('Admin login successful!', 'success')
             return redirect(url_for('admin_dashboard'))
@@ -388,6 +338,43 @@ def logout():
     flash('Logged out successfully!', 'success')
     return redirect(url_for('index'))
 
+@app.route('/debug/session')
+def debug_session():
+    return f"""
+    <h3>Session Debug</h3>
+    <pre>
+    Session data: {dict(session)}
+    User Type: {session.get('user_type', 'Not set')}
+    Student ID: {session.get('student_id', 'Not set')}
+    Student Email: {session.get('student_email', 'Not set')}
+    Admin ID: {session.get('admin_id', 'Not set')}
+    Admin Email: {session.get('admin_email', 'Not set')}
+    </pre>
+    <a href="/" class="btn btn-primary">Home</a>
+    <a href="/student/login" class="btn btn-secondary">Student Login</a>
+    """
+
+@app.route('/debug/database')
+def debug_database():
+    conn = get_db_connection()
+    students = conn.execute('SELECT * FROM students').fetchall()
+    admins = conn.execute('SELECT * FROM admins').fetchall()
+    applications = conn.execute('SELECT * FROM applications').fetchall()
+    conn.close()
+    
+    student_list = []
+    for student in students:
+        student_list.append(dict(student))
+    
+    return f"""
+    <h3>Database Debug</h3>
+    <pre>
+    Students ({len(students)}): {student_list}
+    Admins ({len(admins)}): {[dict(admin) for admin in admins]}
+    Applications: {len(applications)}
+    </pre>
+    <a href="/" class="btn btn-primary">Home</a>
+    """
 
 if __name__ == '__main__':
     # Initialize database
@@ -395,4 +382,4 @@ if __name__ == '__main__':
     
     # Get port from environment variable for Render
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=True)  # Changed to True for debugging
