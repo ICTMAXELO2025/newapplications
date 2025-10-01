@@ -6,10 +6,36 @@
         <div class="card">
             <div class="card-header">
                 <h4 class="mb-0">Internship Application</h4>
-                {% if session.user_type == 'student' %}
-                    <small class="text-muted">Applying as: {{ session.student_email }}</small>
-                {% endif %}
             </div>
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data">
-                    <!-- ... rest of your form remains the same ... -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="names" class="form-label">First and Middle Names</label>
+                            <input type="text" class="form-control" id="names" name="names" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="surname" class="form-label">Surname</label>
+                            <input type="text" class="form-control" id="surname" name="surname" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="course" class="form-label">Course/Program</label>
+                        <input type="text" class="form-control" id="course" name="course" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="university" class="form-label">University</label>
+                        <input type="text" class="form-control" id="university" name="university" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cv" class="form-label">Upload CV (PDF only)</label>
+                        <input type="file" class="form-control" id="cv" name="cv" accept=".pdf" required>
+                        <div class="form-text">Please upload your CV in PDF format (max 16MB)</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
