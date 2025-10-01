@@ -36,6 +36,7 @@ def get_db_connection():
         return conn
 
 # Initialize database tables - NEEDS UPDATE for PostgreSQL
+# Initialize database tables - FIXED: Remove duplicates
 def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -76,6 +77,18 @@ def init_db():
                 student_id INTEGER REFERENCES students(id)
             )
         ''')
+        
+        # ADD THIS NEW TABLE FOR MESSAGES
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS messages (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                subject VARCHAR(200) NOT NULL,
+                message TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
     else:
         # SQLite syntax
         cursor.execute('''
@@ -107,6 +120,18 @@ def init_db():
                 status VARCHAR(20) DEFAULT 'pending',
                 date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 student_id INTEGER REFERENCES students(id)
+            )
+        ''')
+        
+        # ADD THIS NEW TABLE FOR MESSAGES
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS messages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) NOT NULL,
+                subject VARCHAR(200) NOT NULL,
+                message TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
     
@@ -559,6 +584,61 @@ def debug_database():
     </pre>
     <a href="/" class="btn btn-primary">Home</a>
     """
+
+    # Contact Message Routes
+@app.route('/send-message', methods=['GET', 'POST'])
+def send_message():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        subject = request.form['subject']
+        message_text = request.form['message']
+        
+        # Validate required fields
+        if not all([name, email, subject, message_text]):
+            flash('Please fill in all required fields.', 'error')
+            return render_template('send_message.html')
+        
+        # Save message to database
+        conn = get_db_connection()
+        try:
+            conn.execute(
+                'INSERT INTO messages (name, email, subject, message) VALUES (?, ?, ?, ?)',
+                (name, email, subject, message_text)
+            )
+            conn.commit()
+            flash('Your message has been sent successfully! We will get back to you soon.', 'success')
+        except Exception as e:
+            flash('Error sending message. Please try again.', 'error')
+            print(f"Message send error: {e}")
+        finally:
+            conn.close()
+        
+        return redirect(url_for('send_message'))
+    
+    return render_template('send_message.html')
+
+@app.route('/admin/view-messages')
+@admin_login_required
+def view_messages():
+    conn = get_db_connection()
+    messages = conn.execute(
+        'SELECT * FROM messages ORDER BY created_at DESC'
+    ).fetchall()
+    conn.close()
+    
+    return render_template('view_messages.html', messages=messages)
+
+@app.route('/admin/delete-message/<int:message_id>')
+@admin_login_required
+def delete_message(message_id):
+    conn = get_db_connection()
+    conn.execute('DELETE FROM messages WHERE id = ?', (message_id,))
+    conn.commit()
+    conn.close()
+    
+    flash('Message deleted successfully!', 'success')
+    return redirect(url_for('view_messages'))
 
 if __name__ == '__main__':
     # Initialize database
