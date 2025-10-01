@@ -4,6 +4,9 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
 import sqlite3
+from flask import send_file, abort
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here-change-this-in-production')
@@ -113,10 +116,6 @@ def init_db():
     conn.commit()
     conn.close()
     print("✅ Database initialized successfully!")
-
-# ... [rest of your routes remain the same] ...
-
-
 
 # Simple login required decorator
 def student_login_required(f):
@@ -383,6 +382,37 @@ def delete_application(app_id):
     
     flash('Application deleted!', 'success')
     return redirect(url_for('admin_dashboard'))
+
+# NEW: Admin CV Download Route
+@app.route('/admin/download_cv/<int:app_id>')
+@admin_login_required
+def admin_download_cv(app_id):
+    conn = get_db_connection()
+    application = conn.execute(
+        'SELECT * FROM applications WHERE id = ?', (app_id,)
+    ).fetchone()
+    conn.close()
+    
+    if not application:
+        flash('Application not found!', 'error')
+        return redirect(url_for('admin_dashboard'))
+    
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], application['cv_filename'])
+    
+    if not os.path.exists(filepath):
+        flash('CV file not found!', 'error')
+        return redirect(url_for('admin_dashboard'))
+    
+    # Create a nice filename for download
+    download_name = f"CV_{application['surname']}_{application['names']}.pdf"
+    
+    # Send the file for download
+    return send_file(
+        filepath,
+        as_attachment=True,
+        download_name=download_name,
+        mimetype='application/pdf'
+    )
 
 @app.route('/forgot-password')
 def forgot_password():
