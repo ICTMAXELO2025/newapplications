@@ -17,7 +17,7 @@
                     <a class="nav-link" href="{{ url_for('application') }}">Apply</a>
                     <a class="nav-link" href="{{ url_for('logout') }}">Logout ({{ session.student_email }})</a>
                 {% elif session.user_type == 'admin' %}
-                    <a class="nav-link" href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+                  
                     <a class="nav-link" href="{{ url_for('logout') }}">Logout (Admin)</a>
                 {% else %}
                     <a class="nav-link" href="{{ url_for('student_login') }}">Student Login</a>
