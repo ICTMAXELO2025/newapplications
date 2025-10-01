@@ -139,13 +139,7 @@ def admin_login_required(f):
 # Routes
 @app.route('/')
 def index():
-    positions = [
-        {"title": "Software Development Intern", "department": "IT"},
-        {"title": "Marketing Intern", "department": "Marketing"},
-        {"title": "Finance Intern", "department": "Finance"},
-        {"title": "Data Science Intern", "department": "Analytics"}
-    ]
-    return render_template('index.html', positions=positions)
+    return render_template('index.html')
 
 @app.route('/student/register', methods=['GET', 'POST'])
 def student_register():

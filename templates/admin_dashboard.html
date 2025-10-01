@@ -4,6 +4,56 @@
 <h2>Admin Dashboard</h2>
 <p>Welcome, {{ session.admin_email }}</p>  <!-- Added admin email display -->
 
+
+<!-- Statistics Cards -->
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5 class="card-title">Total Applications</h5>
+                <h3 class="card-text">{{ applications|length }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5 class="card-title">Pending</h5>
+                <h3 class="card-text">{{ applications|selectattr('status', 'equalto', 'pending')|list|length }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5 class="card-title">Approved</h5>
+                <h3 class="card-text">{{ applications|selectattr('status', 'equalto', 'approved')|list|length }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger">
+            <div class="card-body">
+                <h5 class="card-title">Rejected</h5>
+                <h3 class="card-text">{{ applications|selectattr('status', 'equalto', 'rejected')|list|length }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Quick Actions</h5>
+    </div>
+    <div class="card-body">
+        <div class="btn-group">
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">Refresh</a>
+            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header">
         <h5 class="mb-0">All Applications</h5>
@@ -94,54 +144,7 @@
     </div>
 </div>
 
-<!-- Statistics Cards -->
-<div class="row mt-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h5 class="card-title">Total Applications</h5>
-                <h3 class="card-text">{{ applications|length }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning">
-            <div class="card-body">
-                <h5 class="card-title">Pending</h5>
-                <h3 class="card-text">{{ applications|selectattr('status', 'equalto', 'pending')|list|length }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title">Approved</h5>
-                <h3 class="card-text">{{ applications|selectattr('status', 'equalto', 'approved')|list|length }}</h3>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-danger">
-            <div class="card-body">
-                <h5 class="card-title">Rejected</h5>
-                <h3 class="card-text">{{ applications|selectattr('status', 'equalto', 'rejected')|list|length }}</h3>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Quick Actions -->
-<div class="card mt-4">
-    <div class="card-header">
-        <h5 class="mb-0">Quick Actions</h5>
-    </div>
-    <div class="card-body">
-        <div class="btn-group">
-            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">Refresh</a>
-            <a href="{{ url_for('logout') }}" class="btn btn-outline-danger">Logout</a>
-        </div>
-    </div>
-</div>
 {% endblock %}
 
 {% block scripts %}
