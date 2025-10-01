@@ -4,9 +4,10 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
 import sqlite3
-from flask import send_file, abort
-import os
-from werkzeug.utils import secure_filename
+import secrets
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your-secret-key-here-change-this-in-production')
@@ -15,6 +16,9 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 # Create uploads directory if it doesn't exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# Password reset tokens storage (in production, use Redis or database)
+password_reset_tokens = {}
 
 # Database connection - FIXED: Only one function
 def get_db_connection():
@@ -116,6 +120,54 @@ def init_db():
     conn.commit()
     conn.close()
     print("✅ Database initialized successfully!")
+
+# Email sending function (for production)
+def send_password_reset_email(email, reset_url):
+    """
+    Send password reset email (configure with your email service)
+    """
+    try:
+        # This is a template - configure with your actual email service
+        smtp_server = "your-smtp-server.com"
+        smtp_port = 587
+        sender_email = "noreply@maxelo.co.za"
+        sender_password = "your-email-password"
+        
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = email
+        message["Subject"] = "Password Reset Request - Maxelo Internship Portal"
+        
+        body = f"""
+        Hello,
+        
+        You have requested to reset your password for the Maxelo Internship Portal.
+        
+        Please click the link below to reset your password:
+        {reset_url}
+        
+        This link will expire in 24 hours.
+        
+        If you did not request this reset, please ignore this email.
+        
+        Best regards,
+        Maxelo Business Solutions Team
+        """
+        
+        message.attach(MIMEText(body, "plain"))
+        
+        # Uncomment and configure for production:
+        # server = smtplib.SMTP(smtp_server, smtp_port)
+        # server.starttls()
+        # server.login(sender_email, sender_password)
+        # server.send_message(message)
+        # server.quit()
+        
+        print(f"Password reset email would be sent to: {email}")
+        print(f"Reset URL: {reset_url}")
+        
+    except Exception as e:
+        print(f"Error sending email: {e}")
 
 # Simple login required decorator
 def student_login_required(f):
@@ -320,50 +372,37 @@ def admin_login():
 @app.route('/admin/dashboard')
 @admin_login_required
 def admin_dashboard():
-    search_query = request.args.get('search', '')
-    status_filter = request.args.get('status', '')
+    search_query = request.args.get('search', '').strip()
     
     conn = get_db_connection()
     
-    # Build query based on filters
-    query = '''
-        SELECT a.*, s.email as student_email 
-        FROM applications a 
-        JOIN students s ON a.student_id = s.id 
-    '''
-    params = []
-    
-    conditions = []
     if search_query:
-        conditions.append('(a.names LIKE ? OR a.surname LIKE ? OR s.email LIKE ?)')
+        # Search across multiple fields
+        query = '''
+            SELECT a.*, s.email as student_email 
+            FROM applications a 
+            JOIN students s ON a.student_id = s.id 
+            WHERE a.names LIKE ? OR a.surname LIKE ? OR a.course LIKE ? 
+            OR a.university LIKE ? OR s.email LIKE ?
+            ORDER BY a.date_applied DESC
+        '''
         search_term = f'%{search_query}%'
-        params.extend([search_term, search_term, search_term])
-    
-    if status_filter:
-        conditions.append('a.status = ?')
-        params.append(status_filter)
-    
-    if conditions:
-        query += ' WHERE ' + ' AND '.join(conditions)
-    
-    query += ' ORDER BY a.date_applied DESC'
-    
-    applications = conn.execute(query, params).fetchall()
-    
-    # Get counts
-    total_count = conn.execute('SELECT COUNT(*) FROM applications').fetchone()[0]
-    pending_count = conn.execute('SELECT COUNT(*) FROM applications WHERE status = ?', ('pending',)).fetchone()[0]
-    approved_count = conn.execute('SELECT COUNT(*) FROM applications WHERE status = ?', ('approved',)).fetchone()[0]
-    rejected_count = conn.execute('SELECT COUNT(*) FROM applications WHERE status = ?', ('rejected',)).fetchone()[0]
+        applications = conn.execute(query, (
+            search_term, search_term, search_term, 
+            search_term, search_term
+        )).fetchall()
+    else:
+        # Get all applications if no search
+        applications = conn.execute('''
+            SELECT a.*, s.email as student_email 
+            FROM applications a 
+            JOIN students s ON a.student_id = s.id 
+            ORDER BY a.date_applied DESC
+        ''').fetchall()
     
     conn.close()
     
-    return render_template('admin_dashboard.html', 
-                         applications=applications,
-                         total_count=total_count,
-                         pending_count=pending_count,
-                         approved_count=approved_count,
-                         rejected_count=rejected_count)
+    return render_template('admin_dashboard.html', applications=applications)
 
 @app.route('/admin/update_status/<int:app_id>/<status>')
 @admin_login_required
@@ -442,9 +481,117 @@ def admin_download_cv(app_id):
         mimetype='application/pdf'
     )
 
-@app.route('/forgot-password')
+# Password Reset Routes
+@app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        user_type = request.form['user_type']
+        
+        conn = get_db_connection()
+        
+        # Check if email exists in the appropriate table
+        if user_type == 'student':
+            user = conn.execute('SELECT * FROM students WHERE email = ?', (email,)).fetchone()
+            table_name = 'students'
+        else:  # admin
+            user = conn.execute('SELECT * FROM admins WHERE email = ?', (email,)).fetchone()
+            table_name = 'admins'
+        
+        conn.close()
+        
+        if user:
+            # Generate reset token
+            reset_token = secrets.token_urlsafe(32)
+            
+            # Store token with user info (in production, use database with expiration)
+            password_reset_tokens[reset_token] = {
+                'email': email,
+                'user_type': user_type,
+                'table_name': table_name,
+                'created_at': datetime.utcnow()
+            }
+            
+            # In a real application, send email with reset link
+            # For now, we'll just show the reset link (for development)
+            reset_url = url_for('reset_password', token=reset_token, _external=True)
+            
+            flash(f'Password reset link generated. For development: <a href="{reset_url}">Click here to reset password</a>', 'success')
+            
+            # In production, you would send an email:
+            # send_password_reset_email(email, reset_url)
+            
+        else:
+            flash('Email address not found in our system!', 'error')
+        
+        return redirect(url_for('forgot_password'))
+    
     return render_template('forgot_password.html')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    # Check if token is valid
+    token_data = password_reset_tokens.get(token)
+    
+    if not token_data:
+        flash('Invalid or expired reset token!', 'error')
+        return redirect(url_for('forgot_password'))
+    
+    # Check if token is expired (24 hours)
+    token_age = datetime.utcnow() - token_data['created_at']
+    if token_age.total_seconds() > 24 * 60 * 60:  # 24 hours
+        del password_reset_tokens[token]
+        flash('Reset token has expired!', 'error')
+        return redirect(url_for('forgot_password'))
+    
+    if request.method == 'POST':
+        password = request.form['password']
+        confirm_password = request.form['confirm_password']
+        
+        if password != confirm_password:
+            flash('Passwords do not match!', 'error')
+            return render_template('reset_password.html', token=token)
+        
+        if len(password) < 6:
+            flash('Password must be at least 6 characters long!', 'error')
+            return render_template('reset_password.html', token=token)
+        
+        # Update password in database
+        conn = get_db_connection()
+        hashed_password = generate_password_hash(password)
+        
+        try:
+            if token_data['user_type'] == 'student':
+                conn.execute(
+                    'UPDATE students SET password = ? WHERE email = ?',
+                    (hashed_password, token_data['email'])
+                )
+            else:  # admin
+                conn.execute(
+                    'UPDATE admins SET password = ? WHERE email = ?',
+                    (hashed_password, token_data['email'])
+                )
+            
+            conn.commit()
+            
+            # Remove used token
+            del password_reset_tokens[token]
+            
+            flash('Password updated successfully! You can now login with your new password.', 'success')
+            conn.close()
+            
+            # Redirect to appropriate login page
+            if token_data['user_type'] == 'student':
+                return redirect(url_for('student_login'))
+            else:
+                return redirect(url_for('admin_login'))
+                
+        except Exception as e:
+            conn.close()
+            flash('Error updating password. Please try again.', 'error')
+            print(f"Password reset error: {e}")
+    
+    return render_template('reset_password.html', token=token)
 
 @app.route('/logout')
 def logout():
@@ -497,4 +644,4 @@ if __name__ == '__main__':
     
     # Get port from environment variable for Render
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)  # Changed to True for debugging
+    app.run(host='0.0.0.0', port=port, debug=True)
