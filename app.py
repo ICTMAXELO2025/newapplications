@@ -13,53 +13,110 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 # Create uploads directory if it doesn't exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-# Database connection - Use SQLite for now to avoid PostgreSQL issues
+# Database connection - FIXED: Only one function
 def get_db_connection():
-    # For now, always use SQLite to avoid connection issues
-    conn = sqlite3.connect('applications.db')
-    conn.row_factory = sqlite3.Row
-    return conn
+    if os.getenv('DATABASE_URL'):
+        # Use PostgreSQL on Render
+        import psycopg2
+        from urllib.parse import urlparse
+        
+        result = urlparse(os.getenv('DATABASE_URL'))
+        conn = psycopg2.connect(
+            database=result.path[1:],
+            user=result.username,
+            password=result.password,
+            host=result.hostname,
+            port=result.port
+        )
+        return conn
+    else:
+        # Use SQLite locally
+        conn = sqlite3.connect('applications.db')
+        conn.row_factory = sqlite3.Row
+        return conn
 
-# Initialize database tables
+# Initialize database tables - NEEDS UPDATE for PostgreSQL
 def init_db():
     conn = get_db_connection()
+    cursor = conn.cursor()
     
-    # SQLite syntax (compatible with both)
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS students (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email VARCHAR(100) UNIQUE NOT NULL,
-            phone VARCHAR(20) NOT NULL,
-            password VARCHAR(200) NOT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    ''')
+    # Check if we're using PostgreSQL or SQLite
+    is_postgres = hasattr(conn, 'cursor') and not hasattr(conn, 'row_factory')
     
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS admins (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email VARCHAR(100) UNIQUE NOT NULL,
-            password VARCHAR(200) NOT NULL
-        )
-    ''')
-    
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS applications (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            names VARCHAR(100) NOT NULL,
-            surname VARCHAR(100) NOT NULL,
-            course VARCHAR(100) NOT NULL,
-            university VARCHAR(100) NOT NULL,
-            cv_filename VARCHAR(200) NOT NULL,
-            status VARCHAR(20) DEFAULT 'pending',
-            date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            student_id INTEGER REFERENCES students(id)
-        )
-    ''')
+    if is_postgres:
+        # PostgreSQL syntax
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS students (
+                id SERIAL PRIMARY KEY,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                phone VARCHAR(20) NOT NULL,
+                password VARCHAR(200) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS admins (
+                id SERIAL PRIMARY KEY,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(200) NOT NULL
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS applications (
+                id SERIAL PRIMARY KEY,
+                names VARCHAR(100) NOT NULL,
+                surname VARCHAR(100) NOT NULL,
+                course VARCHAR(100) NOT NULL,
+                university VARCHAR(100) NOT NULL,
+                cv_filename VARCHAR(200) NOT NULL,
+                status VARCHAR(20) DEFAULT 'pending',
+                date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                student_id INTEGER REFERENCES students(id)
+            )
+        ''')
+    else:
+        # SQLite syntax
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS students (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                phone VARCHAR(20) NOT NULL,
+                password VARCHAR(200) NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS admins (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(200) NOT NULL
+            )
+        ''')
+        
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS applications (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                names VARCHAR(100) NOT NULL,
+                surname VARCHAR(100) NOT NULL,
+                course VARCHAR(100) NOT NULL,
+                university VARCHAR(100) NOT NULL,
+                cv_filename VARCHAR(200) NOT NULL,
+                status VARCHAR(20) DEFAULT 'pending',
+                date_applied TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                student_id INTEGER REFERENCES students(id)
+            )
+        ''')
     
     conn.commit()
     conn.close()
     print("✅ Database initialized successfully!")
+
+# ... [rest of your routes remain the same] ...
+
+
 
 # Simple login required decorator
 def student_login_required(f):
