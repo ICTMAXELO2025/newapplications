@@ -44,11 +44,11 @@
                                 <button type="button" class="btn btn-sm btn-outline-info view-message-btn" 
                                         data-bs-toggle="modal" 
                                         data-bs-target="#messageModal"
-                                        data-name="{{ msg.name }}"
-                                        data-email="{{ msg.email }}"
-                                        data-subject="{{ msg.subject }}"
-                                        data-date="{{ msg.created_at }}"
-                                        data-message="{{ msg.message }}">
+                                        data-name="{{ msg.name | escape }}"
+                                        data-email="{{ msg.email | escape }}"
+                                        data-subject="{{ msg.subject | escape }}"
+                                        data-date="{{ msg.created_at | escape }}"
+                                        data-message="{{ msg.message | escape }}">
                                     <i class="fas fa-eye"></i> View
                                 </button>
                             </td>
@@ -92,12 +92,9 @@
                 <p><strong>Subject:</strong> <span id="messageSubject"></span></p>
                 <p><strong>Date:</strong> <span id="messageDate"></span></p>
                 <hr>
-                <p id="messageContent" style="white-space: pre-wrap;"></p>
+                <p id="messageContent" style="white-space: pre-wrap; word-wrap: break-word;"></p>
             </div>
             <div class="modal-footer">
-                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">
-                    <i class="fas fa-arrow-left me-2"></i>Back
-                </a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
@@ -118,7 +115,10 @@ $(document).ready(function() {
     $('#messagesTable').DataTable({
         "pageLength": 25,
         "order": [[ 0, "desc" ]],
-        "responsive": true
+        "responsive": true,
+        "language": {
+            "emptyTable": "No messages found"
+        }
     });
 
     // Handle modal show event to populate data
@@ -130,12 +130,23 @@ $(document).ready(function() {
         var date = button.data('date');
         var message = button.data('message');
 
+        console.log('Modal data:', {name, email, subject, date, message}); // Debug log
+
         // Update modal content
-        $('#messageName').text(name);
+        $('#messageName').text(name || 'Unknown');
         $('#messageFrom').text(name + ' <' + email + '>');
-        $('#messageSubject').text(subject);
-        $('#messageDate').text(date);
-        $('#messageContent').text(message);
+        $('#messageSubject').text(subject || 'No Subject');
+        $('#messageDate').text(date || 'Unknown Date');
+        $('#messageContent').text(message || 'No message content');
+    });
+
+    // Reset modal when closed
+    $('#messageModal').on('hidden.bs.modal', function () {
+        $('#messageName').text('');
+        $('#messageFrom').text('');
+        $('#messageSubject').text('');
+        $('#messageDate').text('');
+        $('#messageContent').text('');
     });
 });
 </script>
