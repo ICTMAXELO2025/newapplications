@@ -49,10 +49,6 @@
                             <td>{{ msg.created_at }}</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a href="mailto:{{ msg.email }}?subject=Re: {{ msg.subject }}" 
-                                       class="btn btn-primary" title="Reply">
-                                        <i class="fas fa-reply"></i>
-                                    </a>
                                     <a href="{{ url_for('delete_message', message_id=msg.id) }}" 
                                        class="btn btn-outline-danger" 
                                        title="Delete Message"
@@ -79,9 +75,8 @@
                                         <p>{{ msg.message }}</p>
                                     </div>
                                     <div class="modal-footer">
-                                        <a href="mailto:{{ msg.email }}?subject=Re: {{ msg.subject }}" 
-                                           class="btn btn-primary">
-                                            <i class="fas fa-reply me-2"></i>Reply
+                                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">
+                                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
                                         </a>
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     </div>
