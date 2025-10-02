@@ -21,7 +21,7 @@
         <div class="card-body">
             {% if messages %}
             <div class="table-responsive">
-                <table class="table table-striped" id="messagesTable">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -41,14 +41,8 @@
                             <td>{{ msg.email }}</td>
                             <td>{{ msg.subject }}</td>
                             <td>
-                                <button type="button" class="btn btn-sm btn-outline-info view-message-btn" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#messageModal"
-                                        data-name="{{ msg.name }}"
-                                        data-email="{{ msg.email }}"
-                                        data-subject="{{ msg.subject }}"
-                                        data-date="{{ msg.created_at }}"
-                                        data-content="{{ msg.message }}">
+                                <button type="button" class="btn btn-sm btn-outline-info" 
+                                        onclick="showMessage('{{ msg.name }}', '{{ msg.email }}', '{{ msg.subject }}', '{{ msg.created_at }}', `{{ msg.message }}`)">
                                     <i class="fas fa-eye"></i> View
                                 </button>
                             </td>
@@ -92,11 +86,11 @@
                 <p><strong>Subject:</strong> <span id="messageSubject"></span></p>
                 <p><strong>Date:</strong> <span id="messageDate"></span></p>
                 <hr>
-                <p id="messageContent"></p>
+                <p id="messageContent" style="white-space: pre-wrap;"></p>
             </div>
             <div class="modal-footer">
                 <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary">
-                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                    <i class="fas fa-arrow-left me-2"></i>Back
                 </a>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
@@ -113,39 +107,26 @@
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
 <script>
+// Simple function to show message in modal
+function showMessage(name, email, subject, date, content) {
+    // Populate modal content
+    document.getElementById('messageName').textContent = name;
+    document.getElementById('messageFrom').textContent = name + ' <' + email + '>';
+    document.getElementById('messageSubject').textContent = subject;
+    document.getElementById('messageDate').textContent = date;
+    document.getElementById('messageContent').textContent = content;
+    
+    // Show the modal using Bootstrap
+    var modal = new bootstrap.Modal(document.getElementById('messageModal'));
+    modal.show();
+}
+
+// Initialize DataTable
 $(document).ready(function() {
-    // Initialize DataTable
-    var table = $('#messagesTable').DataTable({
+    $('.table').DataTable({
         "pageLength": 25,
         "order": [[ 0, "desc" ]],
         "responsive": true
-    });
-
-    // Handle modal show event to populate data
-    $('#messageModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget); // Button that triggered the modal
-        var name = button.data('name');
-        var email = button.data('email');
-        var subject = button.data('subject');
-        var date = button.data('date');
-        var content = button.data('content');
-
-        // Update modal content
-        $('#messageName').text(name);
-        $('#messageFrom').text(name + ' <' + email + '>');
-        $('#messageSubject').text(subject);
-        $('#messageDate').text(date);
-        $('#messageContent').text(content);
-    });
-
-    // Clean up modal when hidden
-    $('#messageModal').on('hidden.bs.modal', function () {
-        // Clear modal content
-        $('#messageName').text('');
-        $('#messageFrom').text('');
-        $('#messageSubject').text('');
-        $('#messageDate').text('');
-        $('#messageContent').text('');
     });
 });
 </script>

@@ -234,7 +234,7 @@ def student_dashboard():
     applications = conn.execute('''
         SELECT * FROM applications 
         WHERE student_id = ? 
-        ORDER BY date_applied DESC
+        ORDER BY id
     ''', (student_id,)).fetchall()
     conn.close()
     
@@ -354,7 +354,7 @@ def admin_dashboard():
             JOIN students s ON a.student_id = s.id 
             WHERE a.names LIKE ? OR a.surname LIKE ? OR a.course LIKE ? 
             OR a.university LIKE ? OR s.email LIKE ?
-            ORDER BY a.date_applied DESC
+            ORDER BY a.id
         '''
         search_term = f'%{search_query}%'
         applications = conn.execute(query, (
@@ -367,7 +367,7 @@ def admin_dashboard():
             SELECT a.*, s.email as student_email 
             FROM applications a 
             JOIN students s ON a.student_id = s.id 
-            ORDER BY a.date_applied DESC
+            ORDER BY a.id
         ''').fetchall()
     
     conn.close()
@@ -623,7 +623,7 @@ def send_message():
 def view_messages():
     conn = get_db_connection()
     messages = conn.execute(
-        'SELECT * FROM messages ORDER BY created_at DESC'
+        'SELECT * FROM messages ORDER BY id'
     ).fetchall()
     conn.close()
     
