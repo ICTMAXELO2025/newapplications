@@ -640,21 +640,7 @@ def delete_message(message_id):
     flash('Message deleted successfully!', 'success')
     return redirect(url_for('view_messages'))
 
-@app.route('/admin/view-messages')
-@admin_login_required
-def view_messages():
-    conn = get_db_connection()
-    messages = conn.execute(
-        'SELECT * FROM messages ORDER BY id DESC'
-    ).fetchall()
-    conn.close()
-    
-    # Debug print
-    print(f"Found {len(messages)} messages:")
-    for msg in messages:
-        print(f"ID: {msg['id']}, Name: {msg['name']}, Email: {msg['email']}")
-    
-    return render_template('view_messages.html', messages=messages)
+
 
 if __name__ == '__main__':
     # Initialize database
