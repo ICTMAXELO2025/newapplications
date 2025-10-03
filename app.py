@@ -158,6 +158,12 @@ def admin_login_required(f):
     decorated_function.__name__ = f.__name__
     return decorated_function
 
+# Get South Africa time
+def get_sa_time():
+    from datetime import timezone, timedelta
+    sa_tz = timezone(timedelta(hours=2))  # South Africa Standard Time (UTC+2)
+    return datetime.now(sa_tz)
+
 # Routes
 @app.route('/')
 def index():
@@ -253,15 +259,20 @@ def application():
         # Handle CV upload
         cv = request.files['cv']
         if cv and cv.filename.endswith('.pdf'):
-            filename = secure_filename(f"{student_id}_{datetime.utcnow().strftime('%Y%m%d%H%M%S')}_{cv.filename}")
+            # Use South Africa time for filename
+            sa_time = get_sa_time()
+            filename = secure_filename(f"{student_id}_{sa_time.strftime('%Y%m%d%H%M%S')}_{cv.filename}")
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             cv.save(filepath)
             
             conn = get_db_connection()
+            
+            # Use South Africa time for application date
+            sa_time_str = sa_time.strftime('%Y-%m-%d %H:%M:%S')
             conn.execute('''
-                INSERT INTO applications (names, surname, course, university, cv_filename, student_id)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (names, surname, course, university, filename, student_id))
+                INSERT INTO applications (names, surname, course, university, cv_filename, student_id, date_applied)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (names, surname, course, university, filename, student_id, sa_time_str))
             conn.commit()
             conn.close()
             
@@ -585,7 +596,7 @@ def debug_database():
     <a href="/" class="btn btn-primary">Home</a>
     """
 
-    # Contact Message Routes
+# Contact Message Routes
 @app.route('/send-message', methods=['GET', 'POST'])
 def send_message():
     if request.method == 'POST':
@@ -599,12 +610,14 @@ def send_message():
             flash('Please fill in all required fields.', 'error')
             return render_template('send_message.html')
         
-        # Save message to database
+        # Save message to database with South Africa time
         conn = get_db_connection()
         try:
+            sa_time = get_sa_time()
+            sa_time_str = sa_time.strftime('%Y-%m-%d %H:%M:%S')
             conn.execute(
-                'INSERT INTO messages (name, email, subject, message) VALUES (?, ?, ?, ?)',
-                (name, email, subject, message_text)
+                'INSERT INTO messages (name, email, subject, message, created_at) VALUES (?, ?, ?, ?, ?)',
+                (name, email, subject, message_text, sa_time_str)
             )
             conn.commit()
             flash('Your message has been sent successfully! We will get back to you soon.', 'success')

@@ -108,13 +108,26 @@
             display: inline-block;
             margin-bottom: 20px;
         }
+        
+        .navbar-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .about-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: var(--primary-color);">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="#">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdd6zLqggMMnk264JLqJmhTi1Es0PkSpbFgg&s" alt="Maxelo Business Solutions Logo" class="navbar-logo">
                 Maxelo Business Solutions
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -137,7 +150,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/student/login">Login</a>
                     </li>
-                   </li>
                 </ul>
             </div>
         </div>
@@ -146,8 +158,8 @@
     <!-- Hero Section -->
     <section class="hero-section text-center">
         <div class="container">
-            <h1 class="display-4 fw-bold mb-4">2025 Work-Integrated Learning Internships Are Now Closed</h1>
-            <p class="lead mb-4">Gain real-world experience and jumpstart your career with our industry-leading internship program.</p>
+            <h1 class="display-4 fw-bold mb-4">2025 Work-Integrated Learning Programs Are Now Closed</h1>
+            <p class="lead mb-4">Gain real-world experience and jumpstart your career with our industry-leading program.</p>
             <div class="deadline-badge">
                 <i class="fas fa-clock me-2"></i>Closing Date: 20 June 2025
             </div>
@@ -169,7 +181,7 @@
                                    drive success. </p>
                    </div>
                 <div class="col-lg-6">
-                    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPQAAADPCAMAAAD1TAyiAAABs1BMVEX///8tMZIAre/0giEtMZQtMpAArfAAru309PcArO4lJYQAr/AArfIAr+4tMZUArPAApudYW5ghJYn5+foAqOIhJIyJibTA4e0oLZMAr+rg4Onw8PUAp9sAp+YAqeOLjbW94fMAAHhzv983sOTm5+wAp+/ygiUArffo9PgAoeJnb6Ps9vn3gSGpqcAApNvS090AAG8AFH7HyNe2ts3Z6/P47OGSkq1+f6JgYZktM4x8f6mIy+PS2OkApPSxssqo1esAEH+TlLet2u5MtNrN5/FycpwzNnzqwKDjp3nu2snx0rvonmbkfSDltozkk1TjuZjkiDvko223ucb028folEg+QYciKHxdudE8sNL3firwhxhHSY7xegTXkmHjiSmIo7rHtZ8HGHQAAFnahkpmtePdt6TeybrRl3begDZET5KtttSemqtsbKg9P5RsxurlezMLn8WZy+t8kLA2SoWX0+UtO301YJgADpEtRXpIWIUAJHlscJVHRZRlZKUdH5KtwNWFrswYfrMKZrIAlNweT5UMgNIAXrUAPpYNZLMUf8tanNgRbMd4wdQdTakiJGsAM30jlOzO8w/5AAAgAElEQVR4nO1di2PaRpoXGGkQGiGBREAgYQchC4yB8ogNJjaxwW7Tdbu93Jq2cbZ33nrvzm3tW2/SvUsfvtvmkrTXbW//5PtG4v0wNnbATfOr62AkGP3m++Z7zWhEUW/wBm/wBm/wBm/wBr9m3Hn7nXfuz/oipot3f7M792h5971ZX8f0cOft9xeXl5fnluce/lpkfeedxbnF3UWL9Ny7s76aaUB69zeLc8DXwuLco98233fHI/F4pA9uQP9bM736iXDn7Q8I18XF5UeEN/zzD80j8QcPHqTT6c9XVlfXtpdKvuNcLhDw++GHoPkPwLO3VPhFEf/Hdz55tLg41xY0kF7+3Yhz3dnNPY/DS7scDtrRgdfrCJwdp6d62VcAGK/d5WXCuYPF5blPpJGfcK80HN4mWbpD2hsK+UuRKV75xLjz3gePHi23RdzC8tzinXM+Fd4LNDm3SNPlMu0CaR/dABWXepFKpXoEKL23+4ho9QDpublH5/osdykAdF2ujooT1rTD5S+9WkJjkajUZE3OqL34MNE+4c77j4jF7tNtW9CPzvdZbp8HKLpcbfUOeeEvr8N1NtNxLVUyhomdrCBgGwIBxsZHLWED5zmL7mI/a0L67fO/Pu6hQZ9B1k24YFSTkR76ZoYKLn0YxQgpChIYZxc4pynXm6e893Bx8ePlxYcPm2a7R8uXxwWiaT9YL1eLNQ26TX4c3kDhVVMbjZiGDOcwKEaT9J3dh4vN4TxkTM+9P66FfTDYoOKObtCukH/pVVMbiWBGMZmhpA2jaJ/yj2DD5h7ugrAHBjXpg1GOuo20n/bStKOPtNe196q5jUSN4zA3XNJ6PW6d8u6jR4u/f/f+/ftvf/Jw0JCd56htxMuuoaQbsxrUxSTHcGiQMet0Rqv/FLbOub/76f1wettX2rj/yYB6Ly4/PM9RE0i+UKhXuUms4nV5ZkU6xnKcJgwTNKtJ/2TL8M4/u1c8Z/cODv7w4O3dQdKPxpGm1gJgyfpYw9+zIp2QOQY7h0gaSCvFVDBWUz+sU+HjgKe0EY7Hs3f6SS8vzu2OJb0SoPs5O1w0PSvSFRH8Ms8zwJthmH5RZ2Rz3UBivXC7lLXPHyQ9N/dpPD6mlXygTN8c0imVNTGLMMMrCChzLYsGLxgBI4XDmFHwYXal9YH73aTBkj9cXt69v5Id00zY02/HHCRKmxHpLZnBAuKwwPFOFvE9VlyArkAMUpCpdz7w9qM2YZDx4scfP9r9Y/it8JhmpG/65TxL0jUNQzTmZEjw6US9QxtIs6wTKaZRaZ9/54Me6w1++9N/iR8/HttO6QaRDmpYYBCIMypgUHDB8lTO1tBmnCxoN28mE39ufeCdR8stukTWy7v/eidfzuXHNrTpvzmka8DZiTiG5w0D8ZhEZt0azrIk+9Cq+Va8+F5XFLoIkenv/yWy6bm3Ob6hQuDGkK7LAoeAs8Bg00gmDVNwspwtaQZsGbHmjDMZizfsJPAOyHmxw3nx396NpPdynotkiOHAYHAyI9If8jwC5caCqOlP6sWtWpJhbNKg2WDTMah+8jR+dGBd3Lu/I1RbpD8Gq/1g5+ze0TjLbcHtuSmkExkOSDuxINfq9a1KtU49ETHYNBjdWNMP9WeGKB8W8+V7Ber+u+98Av6J5JfLzcxy+ZP4W2f7Dy7Y1v5NcVmVKCMgEoNUFmqyKAhahdJNjHjGNJPVu5/dXVioh/NLB1+B/r6/TGQLw3juYdOMEf/8+UUpU9Stfks2I9IpHRQYNFjdqsiKE2PT1BInBqOwprl+mM3dbpTWvjjOHewQZr9ZXny4/LFV47cqwNaLT8dlV13YOLsZpLc0qzYkb1U0FjhrUaQFCWnFVJLFJc9a2nfvdm4vbZVq33s0t/sQuO7+2ye7i7asH368e4lZrOyZ60aQrqF1Bgb0STDDCiQuQ0q0qAuMwhvo8O7BXTgjHm4F1Xc+ICP6339/P37ng0UrHAN9/2RsotFBpN+SzYZ0McObCNLKYg2BzYZQ1DT0usZwHIuS9aW1vrPv/Padd/54J7v9h/DvFq24BNKrf8heomC/H7oJpIMqciKeryVkBpILpDCMXK+IkGjiTLUwEE2nVwqFFd/B2V5L0nNgyFYv5K5sbPd56hmRzjgVluFjRY1lOYVnGK1SVw0TsclqtjFQsot/eTsXyDVWw/d3l5tF0ffuHoxLKbuwGbgJkqZqhsE6tWpdBokjxkC1FLyjJQ8TBfqrwbRJSq9tksnGO58sP9wFzrv/Gtm5zBxFPncjSFPB05PDk2JN4QQnwwjyVrFWO6nU7y7lPOdlEO+AmB89/OCP4f0LJBodxD03Qb3BUSfqCwsniDcwC9Fn9KRYryeoz+6d7ZOhKiWCW8FU19n1YD1BHLP0208/eP+38UI5d4FEowNp/wZIWtqqqaIhZqKcYGLwWYwSlWVB0+ubm+RS4GhU/FNnMouqZjRR1oMQRn+eDWfTvkBu9XINLoVmTrquGSovkLqI04DsgucFsNscJB86kW6xZkAEbmx1fSDGmyYvqNAN27fLgbPc8WXnZPos2QxIB1UBK8jkFEgvBMgveM6qncBbWh16JIN4wRAOw+mOef6IhU8w60Fi0o6OS+lLX+9Gr8+aPumESjJKUiEi5V/eiRkBMwDMGJk6HGU5xApG0bfXvqpExsSmoqwXJ24z6yGTd97Zka5orZIQqYsBVyCNBYFTFAQKHBNIN2h6uMs8P0EGIa2FL+GaexHZcTnKdKg1OT910glQ7hZpuxpGZmkF0F9diBWLGRZB1KKdbnRi0WIUwyhHwmn6EkFYH3wh7ywlXdFw70QONkiNRBNFORksxkh9kFO00z+3pZqCPNvEPJ8sPh5X7R2NNX8ISLtmRVrFXE+FGxIOUTmpp1JUYksqagYplSnRw/b4LaomFkAbUCz/+BI5dB82/KDbrlmR3tKMTlnfos9DZLJwUtNrp/WqrnKYTGMirUV6K2NwJmQkWCw+vsI6kazHO0PSOiu0yvpgvDgY1/JWvaYh8FuGKJo8D4qMMaeowZTkLm7VZMOpKIwgCId3/+8KlxlvhBxlR0u/p0y6DvljizRLVJvVFrYyCvFhgqBg02lijgdLB7Za10VZ5Uxi4WBMG/Wl+as0vBciK25mI+kTTWlPT7IQlPBaZUFDEIySIjgpeLfdGekS4syIM2ewoN09mNyMAUp+MhM/E5dVVBXUnrlxgn3i9WKURzxCCm/PZrXdmfWnAHE5mQXB4tb81VbGQCDqmpHLinEKg3CTNWYQq1UqIimRWSC2vJe0NWvNcQKTKZbvXqnlfM7lmI0hS2km33FWEH1zWr3GmgLrBD3mETcgaTJfT+Z4tNPPjq7WdDzn7SxImCrpJ8Y6xN0tjwWRJScnaogjYBibZj9pImnemSleeDpjFMpe2uGYgfWWwAs7+bb1ZnhkRusVkSfLbWSNRcRvC32kBcvEHea/nDwwsVEKlelZkA4aCschgW3ygnDajJ5QJ7IoaieVmAZBd2eyFkhzJHYBn82xyXrpygtYbwXomZDWBcbZtbaEd5omisYSxYXgQt2d0qMMyaqdPVAMrPCCHm5ceVl6IdBJOaZIuq4xPaTJnKWiZKL6oS5XilsaODOhf4GVwvMQsy2sXSkwsZAF0o4O6WmtI/tQsNdNtVcRQUymKAoL0WgmlaoJJOjuXyiKOMUw9eLVAhML7sYsSCfU/rWvHBm48B5OVtxF2WRAqv3LycCXY6O6eR0L8X2htqOeHul6OyppWW+wVqyAEWvoxb/Uk2SFEdsvasi5eD3+8+TVgw7W/DMITurCwHpfDkIuzAvJ4tJfikkSf4GzZlm26wxG0ZLFtfHLpi6AdGAGpIvEYTnZLjgZklsacmL+9n8lMogsHkMKx1hohqCsnCym37qWVfj5gNc7/YSjmhFFMQn/iZqmiRr5LWtJ7TSy9B+QTFSSIiTU5JhoAw4nk2o1sXTvem6tiTtCs8in68GFAdTDm8c5H7mAovX3VnWr2kHw7mff5PYnLoL2wN2Z25ki6fh/Lg2gdNQI5LZJ5BF/um29s73WBV/53r2l6+FMUUvtm9KmKekNT+4eQa4F8rK81CxwF76yj9673cG9r5YuMzt5Plb80617N69cCg8g3kkkIj0Hshau86ZIsGRTVe/Pr5ojXQfC/umWi1auHkZeHdLxdNV75fpG5hXgm671XrkR92mv+qeaWq5sv+oWLoKNwHRJ77zqFi6CbG66pG/fBPPtnrKkb1+tan1NOJ5q7L1yPYnSVbHtmSrpXP8i15kgHZguad+rbuIiyN+bKunA8Q3YZIMKT1fSZ4GbEIhSO3YgOjXSNyImW5oq6UDo6CZ46k0/qf7SUyLtp2e5x0YbhWmSTvsdjr0bYMrCAZv0VG4aTwe8tP8GJB1hkDRZWuUtl6chaS/tzV19Fu6qaJEGab960ht+B+0N+W/N2pjlc7TLIu0NlV/5tWQ9NFnG5S/N2FvP+8kSaBC0N/TqQ8QIRAVkD4pQef66qtiTwF2mLTPmoh2BS90EMhm+9ofosqPsCAUOSul8NhsOx+MRtzRldZ/326S9NB24jonQMcjeI6twvUA8FArk/H4PAV0+3tnb3/d9++0XS2u35jcB6fRGIW91CqmJk10wyVZ01PV0TiHQWktGh6ay9dy2n2wGRka2q7OpDlgUVwh+AO1NLgOBQA7+93v8fhp65Zv9oyOfz1f6wuqXlZUV6JZ2v8Tjlr5c7Aqk5kaLXrJ/k2cKgibTZ35vkzaxni7S515XNxz2BojtHdO8ZMsh+yW5D8EfAvXo7P9poww4ho6x1IXoy+bK52miLdAt+Wa3RMgwioTT+wEH2bCqTLo9N6VMILzn91pwDexQ0INO8mfFi9ZmceQTVqc0FaT5HaGQN+T1Ej0JWT0VImrS1BayUyrRGHgRIt/jhw4Cm004h0IX2TPjehDZhuYdfbuXOtqr+Bxtebfk3GRJtw55XV5vq9+sM0kfgajJN4BOED6tE6AbvA5X81TrDbuzgb03FChPMw3IlxqeliBGoj2yrV1t26Lr2d229+yeD3sGz2mfZR0N7G1O2WuGC5vzt8Zg3vrp+vtcjDqv9V7zC+0X85sr6fwNyHveYAiy803p90jyVlOa8xu/iF19Lwf39oH/HAT8B40bMR96rdj2Wy4NLPmAo7N8lqvsmk6YMUWEc8RzWaQdLWft6jg5CLDoUGDw3o5ph/TXizQEy1YM1RfAdMEbGqiou29CNW5ypAO0TXh4DGf96yj327LVX7ZxSwfKZevGIperP0y3tHso6e2r3u0xY6TPvI6e4LQtalvIjiGk529A/fFKSJ+FxiJA95BOvzXL0sx1YMN3AZS6DVnhrRsxfTRV5HO+X7S7mgRZj//1C9DGILxzNvv5hCkjvhcq/9ryxojPce+XHYu1cHH/I5UC/m+v3F4qkUiNP+tiSFz+oGRtBRH+r4s28YWfboRTxWKiF8XmjhLwYgwbqX56WNOjUb1WO61fgw9I/Sk4+mDiT0NbqGaszvjvC7JeC9Bnm1TSMJKaLJMbY0Qtab1M2n1a08TYeZ9PVFSZRTzvxEjhtYxaOVdOF0EiWht9MKYOFYEs25tc//VCrOcPyvSRm1IVZDIsuSNZ4LBpmhxvavbV66ZxDulUzACQTS0V1jDIhqZR9W9X1POiJtZHHUux0WHH6honWq0G/3qBFZabOZomW9apUVYRhOYdTqzAaqKRsfVbx8Jo0kHd4DnBkPWTk0rl5FBPJjmnElXPUc8LICgaJ6OOPTGiw768pjLrVevV4XjWGwEXHSKJBgiqVqmcVqvVJ6dP4PcpvLQHj64oI0lXVH5dUGuVYmucFau6hgU+Whn1iYugKmJxxL5aki6IW4NvF5MKQvaYSDz7bsysdh7k7G0QQx/lR8lTR2gU6b9leGyowd6nVQVVjLnzzcAYVAzGGNFrWyIShhyqGIqCk7YKnD77n3M9V7YcKjefBRVlRpJm2RFHKhrDa7FBYxrTFG79CqxPkChEh5vDmuIccjUJVTENhD60/zo8l3V4p0zTzYUFUQ5flnRVw0geomtwREWm/GR0w2NQI3uDDhV1UEMMGjTtTzTFNBWs2mOinnz+l5EloPhOiC6HmjXRqPOykq6LHFKHcqaoBU3h5ZEWeAwkHSkCFx3mAmoag5Hef0TSWRR9orUfzRAzfhjF2r0fctDeQDPRiDovK2ndyaCR0nyiYe0cZ3suUirZp0cc8t31JEKYH9D8hSQrVuB6TNnujlTGeDF8YYzkI5P9oeNml1ya9FaUFc6hdbjOaCPUYByKGaeii1gfPFLDjOLkBlQI3KZcpLaQaTQ7aitp/FQaErhJSwGy+9RBK9G4NGkFKclzYq9EFGN19OHzsCAL6pZhDvZZUeaME92p9TnquobZGlEQg6k1mdbQs5dLg6zXAiHypMr2ApIod7kxHYTePdcZV6KCOFmMUhUFldI1fkDUMQPGc01Afe1+GMVWSxXRFBfst4oZ/plju581WdTrdbhybT8eRdpIPz2MdIzlMuduzJmImqPjqnMRY8FAV2Ul2afGCY3TKhSQ7v3ahOq0DXpC5tuW/VTmnvv7NsNdObA2A+1aEhblR3njoaRTqnBeRE5wgoXhucE41ARQupSOhL4+O0UKDN2Y2Ee6IuLmSDgRlWRTEJKqrP/o6WG9ceBwlWmva7+jAFFeHCGXoaTrmtMYY6dAS+WJNmnVMTFIVaHPYqV0hahOVeN69D6lItx0YsWks90hwYxpfN+92XMh4PI6yq5QoKsWCKrB12qQEXfQjLWGkt7S0OhMyEZRw2L1okS7IIESQX+mFKT1iKEa5cgjDbc0rkeBqpqitQZ5DStay7iCviR/CrQfnpX3h1wuuuwNdM9oRJGTRYg8DRRSLZYlW5k1vd5Q0hUNaWN0NwX25fSiTLs/p/G2XdKc3Zoi6RwmIzahMb1vC4raIrpgONsdkEgaYMJbT9OBgNtLHnAWKndHqFGOYXmOcMXWFoUCg9qkhyQcsSgeGjJ1QdKZUSPmXBRFJUpYJWQkdtnpBQNbli2VZJJdXiEosx23IyGT11tD9hSy/Gdle91bpEEYw0/vDTEyx2iq9djb9rNv9ZZ6DyF9EjUHosF+QBY4CektA6lWy2DFu7SpZnAfWcRAgbqsSQ2ZyY7gTw1+vX0QdAD/QOc2IPjcCYDdLntdrt5d+C5pyGIsHk/aiE5CuiootqVKgFFox6L1JG46YR13KUBR5IyuuDDxkaK0/6xnWMP4jj54AJHYGXFWtMPfu/hCvpzLOu0zJ0OQkk1lklrCibMVMZwIjNpS1pqTbRptcNSd64EsVtBPLBwCTnS+/dRaOCgaHHrh9eQh5vY4HN6yv+8Wzkv66S0VR8f4o6JookmsNzjoZnv1pCk3vwFcZCuLrbBs22elNMOJNQWzZEtNlhUYA2HzsH00g52K8ZOrkafcRyFviD7uy71kflSxY7ifVs3kGD+9IJoTZZc6b7SM/qHW1HSIO/jWcNoiUWoTFVFRGEVxKshyOE5sKAzTKTVtyQzSnr2kQasj+wGHf6OvqXPUe1jsnZKFUee3AMN+kogsJXeeOhBUGWOBvCiCh2wN76DMtexbSmZMpGmZTDQjyzL8UlVNULqGfE0UEPrhZdkTpuLfeAZWqsvKpUhTujI8ze9cvM4xk2TUiSTqjErdtLPyE7HTWjEqtHa2BqFrlUQikeqaoojySG4HmsUk5hjj+ctyOUyFdwYKhtFLkt4ShPMLQk9YZqKArA4BRkc/NUvUCaMTdUHcyTXtuKRjTu5Pb5+IjNFpt5LELMd+V/Ych6nBYsolDRklGQyvnjOFk9KFibQb3LSzo0KSbog1UodBmQ65GmoWC4KawQ44RUiFmE5wntINLAjrP3ldXw4pFp5XAh7aHaeGc1SdloBsVDxR8bticHqnM6taVC5Kas/FnbTM+4miJAdT9orGGp13awbmDPN72nEwZNGBfFnSKdXg5JFVgoUkQpMlljGW7TIFkCIKJ080Uyt2n8FZZxTBog+pKRWjnND2WtWMwSjMsy/pwDw1OAN/adKk7s5/NMJX11VlRHV4LGqo50IqCHMQana/VRWdFunKOs4Ma+OE4Vt9lMgwAubE7x2ufbd78MEF55AeVl4niEGuN9wT11VBGVWIGQNJV3qGRSKDTaU3jQ2KDFGiVNQYXoWra0huNh5bN9l17pmDZNFrZ5/1nymj0TWyEUekGmsaw0qeC6qBcW2yqcuE2vtwICpmYF7o0eK6yJBosNpt0ntQQxxrtV7XTIQwxGSBTSofCL3o18tzDNko0mAaoybOxPqcRqKWNFmkTzhLXTRYrUd7ijKP7Qil3UDUJJZKFXh1eCMLMramMCWVQzwWfih79qnIMSSW/9un4FEF6cE+2Ed0hq8FF9pvLnTN16VqSaRocqxzlVI9poLWRyeUM9FdpZc0FVMYvediUyrhtACR2whhSCprko9Uk4yC8Pr/lCEMXTtzOOgf+wKHKIOw2AMt0ywiYPJYl+b2nFFxvctjUlJFxpiJyrWTarBeD1ZjtSiLGTZamXgRRlVTnL3yq8v9Q6jGQaRZ05A2KuWBL1GDVDFDnmXLPC8HVqh8ruxwOH7qq9SD9ltPZCIPOLD+7VROMLypKAIpJWGFMzM9H6zrYhQJWDCgk0SD7KWvJGtXmJOvJOVMX48dan1vxJJGLZhcN0ZGuamksV6jDkXDRJBl+X0SteOl6XKo/EPvRzKi3CtoUWhJWjPWDaMlfmO9f15jq5YxDCcnGCZWFN64EmUYsAvBfoeQ6BdocWGhmFhYWBhtNuCM4JMkxoaT/zHQCFOfn3kd5bI39H1vMDNsN1b7SJ2M4663gwOqW6zUVJXkOZmMfjr5o7muF5LqjDKmYPxEymIRD7k3lg69fDZZxDSiiSL0TX3c2qtp4m+GqYBL/Z5+Sv4i+2mQ+9Cfj5ui+EWjqJomGKBnL5sP+/QFaK+3XP7JUCedNp8VLuETaqxAnmHx/UGr8B2g6ZCjTD+L1m7eEu/46vbX27eyFPXAvtrP4WWhtFeCHCm7SrlX7VxpNU6ltwm+jlDh1b2naSDiXjnaX2nlj9WkoSAn/+xl+zYs8rQcGNcvDK27DCBtPH28ZpVIwytPH68SrcjasyJu+y6eyKo0Txpa2n7gXiXdld+2m2vt85kmV7b9uHSVxbXZRmGjMP9VnFqxK5dPC9TGwUY23ficyu5QkYY9Q/FWmCqtpQEPqHBjJftg/ykllUr5/OrPNmuI2DF5VNj3nWqJe896xsTLvxvdPnfzywfZTfLQwEJuLZ9fO9iAV/ZG8BGP9dHwz9KDdHoPGgvHD9yU9PWX6Xzh6DF0iO+2JYDtNJX9ajNb2Pn6CqT3yO+lNLVpTzlCD1pPEolnLdI7S1ah6yBM+Zq3Fq2QN9x5KnxAUse8rbsxlscMEp55uiY0HuRoB9iy57irAuq2njuUjUPXWQzyb2Wpgq+PNOl60li84abm7VtA1qBR35IlgLU0tUrkE7nC/Yx5i/T+BjW/1iK9/YWdCWePQdLxfTITmQPSTX1KN2xhxg86tc5gklcQJwgvekqBJcuUvRDZzmIB6ai55Kb15I7Nbarw1CZtf2+4QUiXLNIeKW73BCVBHx3lN49s0puPr3g/213H/K1bPppqkd4uUBHfQakAX5snpCMRooy5u1Tpm2+//ZZMQa4cHKXJpeR3GvPN3s44EYnFfuh9Ihx5xhvEZT+grsmZ8NODpQcSJbWeNJVtSMNI+5qk8/vNz62tUL48DDEwL2lKWvvqKH3ugr0xyJZXNlc2j9uS/poINJz2fVUAVoQ0lf85TCRNxvSGpb3xwvbPZCxI+fkvfaTtioY4U4MAtM+4pM/IJhovkNFd58pu+nay1E6TdLjh7iO90yHdkPKtRUurFul4o0BIw6GNpcYKNTGyVl8Cv02bdGvo5v2RJmnQJgqcb6n7dsH4jm3VpbVtUvfleIGFTKN/H07pKOCgHS+fGbh3JXF6hyo1x0bhqF+9e0i3H9oD4+8oT5aZxlebZiP88+QbLdljOnwg5a39gN0gU1tnD+LZJmnq6a1yZ0yHrct4+sBttblRIhUdniXPKPnLgMblA6EyXf4RtRbPUpLtrQ6gl62vcTc2Wtbbtp+2nWyOadB0n722oQA27Snp503fF2C9Leu5P7klu/tNPBwPL4HASl9EqLhvm5L2SmEqsl2i2qTdx0S9N62te6i1cp5yb+ak/FuboPpgYLaSLA9povnDkDtH1yBEgahMMZJ2Zh0/WAPLTWzjfAMMf34H2i3sR+Jx6MrsHwpkoUrW7lPKGtMgzzW4mJU/5Fs6uHQvTZX281Tk1t7kQU94p+FvNKzVUGsNjzVQ3PDCA+9kn1Lu/7RMUxbc7+qXO43GDvjl9M5Bg+zhlfd5PGALpAw2WYbh1v885NsjEIA76Oes2VoDFF6CRizpFb45ONghws03yo2fPdtkpP3cOLLF97VFmlQWI6tw0NoyrGSNKPdjaHKlfOApXcWSSVJ7Nyp33N3zQmoHotaz0y2QF/HmQIuQxxjEVAbzHOP861A3snEGwej361gRW1XidiNUvHnZ7tYXt99pNis1PxDp+qt5PH5Fp3U1FJMqYnin89mIeznI84Zf/p1rrw5/LfAnQ9QMQzAORxwPB8rl0I+QjCg3MPGYEO7T09NK9fRJdWRmv+kvh34C/R5VP34t4d4Phco/YM6Jzl/m+XohfxYqf2eYDCuOGgKvI5bOXC+fkarvuAUkrxPi/lDoO5ZhkXKdVcKbjnQg9NLASBk5RfI6QjoKlZ+bvILx6An21w9ZT+gFyxmMYLw+zno81gJgygyOwVe4e+wXh0jZ8R1mNCceNdv7WmIDRM0rCA+7n+/1hS/0HMw3NtGvyVmHcy/InbgGGr9u/TXCpv/vLIM5jhl5o/RrCOnoe4NDiBOUie+E/QUi//LvDEIMVusLrvgAAAAvSURBVIRfk7P++rlhCE4URb8qZ/3nw8Na7UNyC9qvSNRv8AZv8AZv8AZv8AYt/D9LQrNe+r/uKgAAAABJRU5ErkJggg==" alt="Business Team" class="img-fluid rounded shadow">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdd6zLqggMMnk264JLqJmhTi1Es0PkSpbFgg&s" alt="Maxelo Business Solutions Logo" class="about-image">
                 </div>
             </div>
         </div>
@@ -179,7 +191,7 @@
     <section id="positions" class="py-5 bg-light">
         <div class="container">
             <h2 class="section-title text-center">Available Positions</h2>
-            <p class="text-center mb-5">Explore our diverse range of internship opportunities designed to launch your career</p>
+            <p class="text-center mb-5">Explore our diverse range of opportunities designed to launch your career</p>
             
             <div class="row g-4">
                 <!-- Position 1 -->
@@ -236,6 +248,7 @@
                             <ul class="list-unstyled">
                                 <li><strong>Duration:</strong> 6-12 months</li>
                                 <li><strong>Requirements:</strong> Technical aptitude, problem-solving skills</li>
+                                <li><strong>Location:</strong> Malalumele</li>
                             </ul>
                         </div>
                     </div>
@@ -250,6 +263,7 @@
                             <ul class="list-unstyled">
                                 <li><strong>Duration:</strong> 6-12 months</li>
                                 <li><strong>Requirements:</strong> Communication skills, creativity</li>
+                                <li><strong>Location:</strong> Malalumele</li>
                             </ul>
                         </div>
                     </div>
@@ -264,8 +278,23 @@
                             <ul class="list-unstyled">
                                 <li><strong>Duration:</strong> 6-12 months</li>
                                 <li><strong>Requirements:</strong> Design software skills, creativity</li>
+                                <li><strong>Location:</strong> Malalumele</li>
                             </ul>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-lg-8 mx-auto">
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle me-2"></i>Application Requirements</h5>
+                        <ul class="mb-0">
+                            <li>CV/Resume in PDF format (max 16MB)</li>
+                            <li>Cetified Matric Cetificate and ID</li>
+                            <li>Current academic Transcript</li>
+                             <li>Placement Letter From Instution</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -308,19 +337,7 @@
                 </div>
             </div>
             
-            <div class="row mt-5">
-                <div class="col-lg-8 mx-auto">
-                    <div class="alert alert-info">
-                        <h5><i class="fas fa-info-circle me-2"></i>Application Requirements</h5>
-                        <ul class="mb-0">
-                            <li>CV/Resume in PDF format (max 16MB)</li>
-                            <li>Cetified Matric and ID</li>
-                            <li>Current academic Transcript</li>
-                             <li>Placement Letter From Instution</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            
 
             <div class="text-center mt-5">
                 <a href="/student/register" class="btn apply-now-btn">Create Account & Apply</a>
@@ -333,25 +350,25 @@
 <section id="contact" class="py-5 bg-light">
     <div class="container">
         <h2 class="section-title text-center">Contact Us</h2>
-        <p class="text-center mb-5">Have questions about our internship program? Get in touch with our team.</p>
+        <p class="text-center mb-5">Have questions about our programs? Get in touch with our team.</p>
         
         <div class="row">
             <div class="col-lg-8 mx-auto">
                 <div class="contact-info">
                     <div class="row">
                         <div class="col-md-6">
-                            <h5><i class="fas fa-map-marker-alt me-2"></i>Our Location</h5>
-                            <p>Office B13 QUICKSAVE COMPLEX BEHIND BUSHVALLEY BUTCHERY MALMULELE 0982</p>
+                            <h5><i class="fas fa-map-marker-alt me-2"></i>Office</h5>
+                            <p>B13 QUICKSAVE COMPLEX BEHIND BUSHVALLEY BUTCHERY MALMULELE 0982</p>
                             
                             <h5 class="mt-4"><i class="fas fa-phone me-2"></i>Phone</h5>
-                            <p>015 013 0340</p>
+                            <p>015 013 0340 / 072 097 9413</p>
                         </div>
                         <div class="col-md-6">
                             <h5><i class="fas fa-envelope me-2"></i>Email</h5>
                             <p>info@maxelobs.co.za</p>
                             
                             <h5 class="mt-4"><i class="fas fa-clock me-2"></i>Business Hours</h5>
-                            <p>Monday - Friday: 08:30am- 16:00pm</p>
+                            <p>Monday - Friday<br> 08:30am - 16:00pm</p>
                         </div>
                     </div>
                     
